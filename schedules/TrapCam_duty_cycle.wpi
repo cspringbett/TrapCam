@@ -1,11 +1,19 @@
-# Turns on the TrapCam every 10 mins to record video for 5 minutes
+# Turns on the TrapCam every 10 mins to record video for 5 minutes. To run, uncomment this schedule block and comment out the below block. 
+# Ensure .bashrc file has continous=0
 
-BEGIN 2015-08-01 00:00:00
-END 2025-07-31 23:59:59
+#BEGIN 2015-08-01 00:00:00
+#END 2025-07-31 23:59:59
 
 # Turn the rPi on for "4 min" and wait for shutdown
 # Will start every 10 mins, as long as schedule wasn't missed from last shut down
 # Allows swapping of batteries during the OFF state
 
-ON M4 WAIT
-OFF M6
+#ON M4 WAIT
+#OFF M6
+
+# New schedule for diurnal duty cycling, continuous=2
+
+BEGIN 2024-04-11 05:00:00
+END   2030-04-18 11:59:59
+ON    H15 WAIT
+OFF   H9
