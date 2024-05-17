@@ -117,7 +117,7 @@ fi
 #--------------------------------------------
 clear
 sleep 1s
-continuous=0
+continuous=2
 
 rf="run.log"
 
@@ -149,6 +149,23 @@ else
         sudo mount /dev/sda1 /media/DATA
         while [ $continuous == 1 ]; do
             timeout --signal=SIGKILL 420s sudo ./TrapCam.sh
+        done
+
+    elif [ $continuous == 2 ]; then
+        # This is a new option that runs on specific periods based on time of day. This use is most stable and will be the default
+        sudo mount /dev/sda1 /media/DATA
+        while true; do
+            current_hour=$(date +%H)
+            if [ $current_hour -ge 5 ] && [ $current_hour -lt 20 ]; then
+                echo "Running TrapCam.sh within operational hours..."
+                timeout --signal=SIGKILL 420s sudo ./TrapCam.sh
+            else
+                echo "rPi shutdown at $(date)" |& tee -a "${rf}"
+                echo "Outside of operational hours. rPi will shutdown now..."
+                sleep 5s
+                sudo shutdown now -h
+                break
+            fi
         done
     fi
 fi
