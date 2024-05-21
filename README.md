@@ -66,10 +66,11 @@ the WittyPi. If you'd like, you can "sudo rm install.sh" to keep your $HOME
 directory clean.
 
 Finally, you need to install the TrapCam software using git. Move into $HOME, and run
-"git clone -b implement_picamera https://github.com/jack-butler/TrapCam" to clone the software from the implement_picamera branch into the TrapCam
+"git clone https://github.com/cspringbett/TrapCam" to clone the software from the TrapCam
 directory. Move into the TrapCam directory ("cd TrapCam/"), and run "sudo bash
 installTrapCam.sh". This installer will copy the configs, services, and scripts to their
 correct locations.
+
 # Configuring Witty Pi
 Turn off your raspberry pi by running "poweroff". Remove power source from pi and connect it to the WittyPi instead. If it doesn't power on immediately, click the button on the WittyPi. Once TrapCam is on, type "cd wittypi" to enter the wittypi directory. From there, run "sh wittypi.sh" to bring up the WittyPi configuration tool. If the WittyPi is not detected, ensure you have a coin cell battery installed in the board, reboot, and try again. Once WittyPi is detected, edit the following settings:
 
@@ -82,15 +83,25 @@ In "View/change other settings"
 4. Set default state to "ON" (This will ensure the camera turns on when power is connected, very important)
 5. Set dummy load duration to "15." This is optional, but its a good way of ensuring the Pi is continuing to draw power from the battery bank.
 
-These settings should be saved after they are initially set, so Witty should b good to go after that.
+These settings should be saved after they are initially set, so Witty should be good to go after that.
+
 # Schedule Scripts
 
 The TrapCam software comes with default schedule scripts that duty cycle the rPi. The
-first schedule (TrapCam_duty_cycle.wpi) turns the rPi on for 5 minutes on the 10s -
-that is, at :00, :10, :20 minutes, etc. past the hour, 24 hours a day. The second schedule
-(TrapCam_8AM_wakeup.wpi) is used once battery limitations preclude using underwater
-lights, and runs the rPi on the same duty cycle above, just between the hours of 7AM and
-7PM.
+first schedule (TrapCam_duty_cycle.wpi) turns the rPi on during the day between the hours of
+05:00 and 20:00 and then turns it off. Videos are recorded in 5 minute video files. This is an update
+from the jack-butler version, as the constant cycling on/off on 5 minute intervals can eventually 
+result in the camera missing its wake up.
+
+You can also swap to the original 5 minutes on the 10s schedule -
+that is, at :00, :10, :20 minutes, etc. past the hour, 24 hours a day. Simply switch set 
+continuous = 0 in the .bashrc file, un-comment the original TrapCam_duty_cycle.wpi schedule
+and comment out the new instructions. Reboot and check the wittypi.sh to ensure schedules were
+copied correctly.
+
+The other schedule (TrapCam_8AM_wakeup.wpi) is used once battery limitations preclude 
+using underwater lights, and runs the rPi on the same duty cycle above, just between the hours 
+of 7AM and 7PM.
 
 These schedule scripts provide good temporal coverage throughout the day, but users can
 create their own schedule scripts if they so choose. The WittyPi user's manual can be
