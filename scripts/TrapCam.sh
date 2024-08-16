@@ -24,7 +24,7 @@ echo '     |__|     | _| `._____/__/     \__\ | _|       \______/__/     \__\ |_
 
 rf="run.log"
 uhome="$(getent passwd $SUDO_USER | cut -d: -f6)"
-user="$(getent passwd $SUDO_USER | cut -d: -f1)"
+hostname="$(hostname)"  # Retrieve the hostname of the Raspberry Pi
 
 echo "Start time of TrapCam.sh: $(date)" |& tee -a "${rf}"
 
@@ -71,7 +71,7 @@ fi
 # -----------------------------------------------------------------------
 # Take video
 # -----------------------------------------------------------------------
-vidname="${user}_$(date +%Y%m%d%H%M%S)"
+vidname="${hostname}_$(date +%Y%m%d%H%M%S)"  # Use hostname in the video filenam
 echo "Video filename: "$vidname".mov" |& tee -a "${rf}"
 
 cd /media/DATA
@@ -79,7 +79,7 @@ echo "Video recording started at $(date +%T)" |& tee -a "${rf}"
 echo "Video filename: "$vidname".mov" |& tee -a "${rf}"
 
 timeout --signal=SIGKILL 360 \
-	python3 $uhome/record_camera.py $vidname -a $user
+	python3 $uhome/record_camera.py $vidname -a "${hostname}"
 
 echo "Video recording ended at $(date +%T)" |& tee -a "${rf}"
 echo "" |& tee -a "${rf}"
