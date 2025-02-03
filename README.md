@@ -111,23 +111,22 @@ the TrapCam script will copy it to the correct location and load that duty cycle
 
 # Lighting for nighttime video
 
-By default, the TrapCam software assumes there are lights for nighttime videography. The
-lights outlined in the build instructions are 6W LED lights, and greatly increase the
-battery drain at night. If unaccounted for in the software, once the battery power drops
-below the 12V needed to power the lights the rPi could freeze and miss a scheduled shutdown,
-leading to a camera that doesn't wake up to take video any longer. To account for this,
-the TrapCam software only runs the lights during the first week of deployment.
+Light control has been modified from the jack-butler version. Light control is found in the TrapCam.sh script, and is run off a simple if/else statement. Do modify light operating hours, simply change the numbers in the if else statement. For example, 
+# -----------------------------------------------------------------------
+# Turn on lights, if necessary
+# -----------------------------------------------------------------------
+if [ $(date +%H) -ge **19** ] || [ $(date +%H) -lt **7** ]; then
+	echo "Time is between 19:00 and 07:00. Turning on lights..." |& tee -a "${rf}"
 
-If you're system doesn't have lights, or if you have enough battery to power the lights
-past the one week limit, you can alter the TrapCam.sh code. Lines 33-36 provide an
-if-statement to tell the rPi at what date to no longer turn on the lights. To alter the
-length of time that lights are powered, change the "+6 days" on Line 35 to however long
-you think your batteries can power the lights (that is, how long they can provide greater
-than 12V). If you aren't running TrapCam with lights at all, simply comment out or remove
-Lines 33-36 and the script will skip turning on lights.
+	gpio mode 25 out
+	gpio write 25 1
 
-IMPORTANT: You need to manually remove the nolights.txt file from $HOME before every new
-deployment. If you don't, the rPi will probably think it's past the date at which are
-operable and will not turn them on. To do this, "sudo rm nolights.txt", and the script
-will automatically create the new txt file with the correct date at which the lights
-will no longer turn on.
+else
+	echo "It's daytime; no need for lights..." |& tee -a "${rf}"
+
+	gpio mode 25 out
+	gpio write 25 0 # for good measure
+
+This turns the light on between 19:00 (7PM) and 07:00 (7AM) and turns them off outside those hours.
+
+
